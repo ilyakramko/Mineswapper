@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width">
+        <link rel="stylesheet" href="style.css">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400..900&display=swap" rel="stylesheet">
+        <script src="script.js"></script>
+        <script src="https://kit.fontawesome.com/e4e850238c.js" crossorigin="anonymous"></script>
+        <title>Mineswapper</title>
+    </head>
+    <body>
+        <div class="mineswapper">
+            <div class="top">
+                <div class="info">
+                    <div class="score-text">Score: </div>
+                    <div id="score" class="score"></div>
+                    <div class="stopwatch-text">Time: </div>
+                    <div id="stopwatch" class="stopwatch"></div>
+                </div>
+                <div class="controls">
+                    <div id="reset" class="reset">
+                        <i class="fa-solid fa-rotate"></i>
+                    </div>
+                </div>
+            </div>
+            <div id="mineswapper-grid" class="grid">
+            </div>
+        </div>
+    </body>
+    <script>
+        setupControls();
+        setupGrid();
+    </script>
+</html>
