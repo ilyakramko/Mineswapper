@@ -1,6 +1,6 @@
-import './App.css';
-import Scoreboard from './scoreboard/scoreboard';
-import Grid from './grid/grid';
+import "./App.css";
+import Scoreboard from "./scoreboard/scoreboard";
+import Grid from "./grid/grid";
 
 function App() {
   return (

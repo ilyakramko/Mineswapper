@@ -1,8 +1,12 @@
-.mineswapper{
+.mineswapper {
   width: 359px;
   height: 410px;
-  background: rgb(120,98,130);
-  background: linear-gradient(180deg, rgba(120,98,130,1) 0%, rgba(186,182,189,1) 100%);
+  background: rgb(120, 98, 130);
+  background: linear-gradient(
+    180deg,
+    rgba(120, 98, 130, 1) 0%,
+    rgba(186, 182, 189, 1) 100%
+  );
   display: flex;
   flex-direction: column;
 }
