@@ -1,0 +1,31 @@
+.top{
+    height: 35px;
+    padding: 5px 10px 5px 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.info{
+    width: 100px;
+    display: flex;
+    align-items: center;
+}
+
+.score{
+    font-size: 18px;
+    margin: 0px 15px 0px 5px;
+}
+
+.fa-rotate{
+    font-size: 20px;
+}
+
+.reset:hover{
+    cursor: pointer;
+}
+
+.stopwatch{
+    font-size: 20px;
+    margin: 0px 15px 0px 5px;
+}

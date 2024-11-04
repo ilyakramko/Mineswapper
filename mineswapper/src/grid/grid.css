@@ -1,0 +1,22 @@
+.grid{
+    height: 370px;
+    padding: 5px;
+    display: flex;
+    flex-wrap: wrap;
+    align-content: start;   
+}
+
+.grid > *:not(:last-child){
+    margin: 0px 0px 1px 0px;
+}
+
+.grid-row{
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    align-content: start;
+}
+
+.grid-row > *:not(:last-child){
+    margin: 0px 1px 0px 0px;
+}
