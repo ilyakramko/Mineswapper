@@ -1,5 +1,10 @@
+import { GameCell } from "../../models/cell";
 import "./cell.css";
 
-export default function Cell() {
-  return <div className="cell"></div>;
+interface CellProps {
+  cell: GameCell;
+}
+
+export default function Cell({ cell }: CellProps) {
+  return <div className="cell">{cell.isBomb ? "B" : "C"}</div>;
 }
