@@ -13,4 +13,5 @@ export interface GameCell {
   status: CellStatus;
   coordinates: Coordinates;
   isBomb: boolean;
+  score: number;
 }

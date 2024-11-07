@@ -1,6 +1,11 @@
+import { GameStatus } from "../models/game";
 import "./scoreboard.css";
 
-export default function Scoreboard() {
+interface ScoreboardProps {
+  onGameStatusUpdate: (status: GameStatus) => void;
+}
+
+export default function Scoreboard({ onGameStatusUpdate }: ScoreboardProps) {
   return (
     <div className="top">
       <div className="info">
@@ -10,9 +15,13 @@ export default function Scoreboard() {
         <div id="stopwatch" className="stopwatch"></div>
       </div>
       <div className="controls">
-        <div id="reset" className="reset">
+        <button
+          id="reset"
+          className="reset"
+          onClick={() => onGameStatusUpdate(GameStatus.NotStarted)}
+        >
           <i className="fa-solid fa-rotate"></i>
-        </div>
+        </button>
       </div>
     </div>
   );
