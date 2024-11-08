@@ -1,72 +1,49 @@
-import { CellStatus, Coordinates, GameCell } from "../../models/cell";
+import {
+  CellStatus,
+  Coordinates,
+  GameCell,
+  getCellStyles,
+} from "../../models/cell";
+import { GameStatus } from "../../models/game";
 import "./cell.css";
 
 interface CellProps {
   cell: GameCell;
-  onCellLeftClick: (coordinates: Coordinates) => void;
+  gameStatus: GameStatus;
+  onCellClick: (
+    coordinates: Coordinates,
+    event: React.MouseEvent<HTMLDivElement>
+  ) => void;
 }
 
-export default function Cell({ cell, onCellLeftClick }: CellProps) {
-  let statusClassName: string = "";
-  let statusContent: string = "";
-
-  switch (cell.status) {
-    case CellStatus.Opened:
-      if (cell.isBomb) {
-        statusClassName = "cell-mine";
-        break;
-      }
-
-      if (cell.score === 0) {
-        statusClassName = "cell-empty";
-      } else {
-        statusClassName = "cell-opened";
-        statusContent = String(cell.score);
-
-        switch (cell.score) {
-          case 1:
-            statusClassName += " cell-one";
-            break;
-          case 2:
-            statusClassName += " cell-two";
-            break;
-          case 3:
-            statusClassName += " cell-three";
-            break;
-          case 4:
-            statusClassName += " cell-four";
-            break;
-          case 5:
-            statusClassName += " cell-five";
-            break;
-        }
-      }
-      break;
-    case CellStatus.Flagged:
-      statusClassName = "cell-flag";
-
-      //if win or gameover
-      // if (cell.isBomb) {
-      //   statusClassName += " cell-flag-bomb";
-      // }
-
-      break;
-    default:
-      break;
-  }
-
+export default function Cell({ cell, gameStatus, onCellClick }: CellProps) {
+  //In case to avoid re-render check the status on click
+  //Is undefined good choice????
   return (
-    <button
-      className={`cell ${statusClassName}`}
-      onClick={() => onCellLeftClick(cell.coordinates)}
+    <div
+      className={`cell ${getCellStyles(cell, gameStatus)}`}
+      // onClick={() =>
+      //   cell.status === CellStatus.Closed ? handleClick : undefined
+      // }
+      //TODO: the right click event is still not working
+      onClick={(event) => {
+        event.persist();
+        event.preventDefault();
+
+        onCellClick(cell.coordinates, event);
+      }}
     >
       {cell.status === CellStatus.Flagged ? (
         <i className="fa-solid fa-flag"></i>
-      ) : cell.status === CellStatus.Opened && cell.isBomb ? (
+      ) : cell.isBomb &&
+        (cell.status === CellStatus.Opened ||
+          gameStatus === GameStatus.GameOver) ? (
         <i className="fa-solid fa-bomb"></i>
       ) : (
-        statusContent
+        cell.status === CellStatus.Opened &&
+        cell.score > 0 &&
+        String(cell.score)
       )}
-    </button>
+    </div>
   );
 }

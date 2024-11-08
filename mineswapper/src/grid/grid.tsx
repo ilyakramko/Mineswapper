@@ -10,34 +10,82 @@ interface GridProps {
   initGrid: GameCell[][];
   gridWidth: number;
   gameStatus: GameStatus;
+  score: number;
+  onSetScore: (score: number) => void;
   onGameStatusUpdate: (status: GameStatus) => void;
 }
 
-//If props from parent and creating the useState on it, is it ok?
+//If from parent and creating the useState on it, is it ok?
+//Too much?
 export default function Grid({
   initGrid,
   gridWidth,
   gameStatus,
+  score,
+  onSetScore,
   onGameStatusUpdate,
 }: GridProps) {
   const [cellArray, setCellArray] = useState<GameCell[][]>(initGrid);
 
   //Was added if initGrid updated since useState is setted only during initial rendering
   //??
+  //useReducer instead?
   useEffect(() => {
     setCellArray(initGrid);
   }, [initGrid]);
 
-  function handleLeftClick(coord: Coordinates) {
+  const handleClick = (
+    coord: Coordinates,
+    event: React.MouseEvent<HTMLDivElement>
+  ) => {
+    switch (event.button) {
+      case 0:
+        handleLeftClick(coord);
+        break;
+      //TODO: Right click is not working;
+      case 1:
+        handleRightClick(coord);
+        break;
+      default:
+        break;
+    }
+  };
+
+  const handleLeftClick = (coord: Coordinates) => {
     let arrayCopy: GameCell[][] = cellArray.slice();
     clickCell(coord, arrayCopy);
     setCellArray(arrayCopy);
-  }
+  };
 
-  // function handleRightClick(coordinates: Coordinates) {}
+  const handleRightClick = (coord: Coordinates) => {
+    if (gameStatus === GameStatus.GameOver) return;
 
-  //TODO: still re-render grid on game-over or by click on opened/flagged cell.
-  function clickCell(coord: Coordinates, arr: GameCell[][]) {
+    let arr: GameCell[][] = cellArray.slice();
+    let scoreCopy: number = score;
+
+    if (gameStatus === GameStatus.NotStarted) {
+      onGameStatusUpdate(GameStatus.InProgress);
+    }
+
+    let cell: GameCell = arr[coord.x][coord.y];
+    if (cell.status === CellStatus.Flagged) {
+      cell.status = CellStatus.Closed;
+      onSetScore(++scoreCopy);
+      setCellArray(arr);
+      return;
+    }
+
+    if (score === 0) return;
+
+    if (cell.status === CellStatus.Closed) {
+      cell.status = CellStatus.Flagged;
+      onSetScore(--scoreCopy);
+      setCellArray(arr);
+      return;
+    }
+  };
+
+  const clickCell = (coord: Coordinates, arr: GameCell[][]) => {
     if (gameStatus === GameStatus.GameOver) return;
 
     if (gameStatus === GameStatus.NotStarted) {
@@ -56,13 +104,12 @@ export default function Grid({
     cell.status = CellStatus.Opened;
 
     if (cell.isBomb) {
-      //TODO: Game Over
       onGameStatusUpdate(GameStatus.GameOver);
       return;
     }
 
     if (cell.score > 0) {
-      //Update the cell array using state?
+      checkForWin(arr);
       return;
     }
 
@@ -82,7 +129,29 @@ export default function Grid({
         clickCell(cellCoord, arr);
       }
     }
-  }
+
+    checkForWin(arr);
+  };
+
+  //Too bad :)
+  const checkForWin = (arr: GameCell[][]) => {
+    if (gameStatus === GameStatus.GameOver) return;
+
+    let oppenedCells: number = 0;
+
+    for (let i = 0; i < gridWidth; i++) {
+      for (let j = 0; j < gridWidth; j++) {
+        if (!arr[i][j].isBomb && arr[i][j].status === CellStatus.Opened) {
+          oppenedCells++;
+        }
+      }
+    }
+
+    //10 is bomb count(awful)
+    if (oppenedCells === gridWidth * gridWidth - 10) {
+      onGameStatusUpdate(GameStatus.Win);
+    }
+  };
 
   const rows = indexes.map((_, rowIndex) => {
     return (
@@ -91,8 +160,9 @@ export default function Grid({
           return (
             <Cell
               key={columnIndex}
-              onCellLeftClick={handleLeftClick}
+              onCellClick={handleClick}
               cell={cellArray[rowIndex][columnIndex]}
+              gameStatus={gameStatus}
             />
           );
         })}
@@ -102,6 +172,18 @@ export default function Grid({
 
   return (
     <div id="mineswapper-grid" className="grid">
+      {(gameStatus === GameStatus.Win ||
+        gameStatus === GameStatus.GameOver) && (
+        <div
+          className={
+            gameStatus === GameStatus.Win
+              ? "result result-win"
+              : "result result-fail"
+          }
+        >
+          {gameStatus === GameStatus.Win ? "Win" : "Game Over"}
+        </div>
+      )}
       {rows}
     </div>
   );

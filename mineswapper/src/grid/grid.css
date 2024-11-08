@@ -20,3 +20,24 @@
 .grid-row > *:not(:last-child) {
   margin: 0px 1px 0px 0px;
 }
+
+.result {
+  height: 350px;
+  width: 350px;
+  position: absolute;
+
+  opacity: 0.8;
+  text-align: center;
+  line-height: 350px;
+  font-size: 35px;
+}
+
+.result-fail {
+  background-color: #d89898;
+  opacity: 0.8;
+}
+
+.result-win {
+  background-color: #9fd898;
+  opacity: 0.8;
+}

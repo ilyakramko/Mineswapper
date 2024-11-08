@@ -5,14 +5,16 @@ import { CellStatus, GameCell } from "./models/cell";
 import { useState } from "react";
 import { GameStatus } from "./models/game";
 
-// const bombsAmount = 10;
+const bombsAmount = 10;
 const gridWidth = 10;
+
 let cellArray: GameCell[][] = [];
 
 function App() {
   const [gameStatus, setGameStatus] = useState<GameStatus>(
     GameStatus.NotStarted
   );
+  const [score, setScore] = useState<number>(bombsAmount);
 
   if (gameStatus === GameStatus.NotStarted) {
     cellArray = generateGrid();
@@ -20,11 +22,18 @@ function App() {
 
   return (
     <div className="mineswapper">
-      <Scoreboard onGameStatusUpdate={setGameStatus} />
+      <Scoreboard
+        score={score}
+        defaultScore={bombsAmount}
+        onResetScore={setScore}
+        onGameStatusUpdate={setGameStatus}
+      />
       <Grid
         initGrid={cellArray}
         gridWidth={gridWidth}
         gameStatus={gameStatus}
+        score={score}
+        onSetScore={setScore}
         onGameStatusUpdate={setGameStatus}
       />
     </div>
