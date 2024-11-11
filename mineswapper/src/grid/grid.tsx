@@ -5,10 +5,13 @@ import { useEffect, useState } from "react";
 import { GameStatus } from "../models/game";
 
 const indexes = Array.from({ length: 10 }, (_, i) => i);
+//To avoid itterating over array
+let oppenedCellsGlobal: number = 0;
 
 interface GridProps {
   initGrid: GameCell[][];
   gridWidth: number;
+  bombCount: number;
   gameStatus: GameStatus;
   score: number;
   onSetScore: (score: number) => void;
@@ -20,6 +23,7 @@ interface GridProps {
 export default function Grid({
   initGrid,
   gridWidth,
+  bombCount,
   gameStatus,
   score,
   onSetScore,
@@ -28,8 +32,7 @@ export default function Grid({
   const [cellArray, setCellArray] = useState<GameCell[][]>(initGrid);
 
   //Was added if initGrid updated since useState is setted only during initial rendering
-  //??
-  //useReducer instead?
+  //Should be avoided?
   useEffect(() => {
     setCellArray(initGrid);
   }, [initGrid]);
@@ -101,15 +104,18 @@ export default function Grid({
       return;
     }
 
-    cell.status = CellStatus.Opened;
+    openCell(cell);
+    // cell.status = CellStatus.Opened;
 
     if (cell.isBomb) {
+      oppenedCellsGlobal = 0;
       onGameStatusUpdate(GameStatus.GameOver);
       return;
     }
 
     if (cell.score > 0) {
-      checkForWin(arr);
+      checkForWinWithoutItterating();
+      // checkForWin(arr);
       return;
     }
 
@@ -130,27 +136,43 @@ export default function Grid({
       }
     }
 
-    checkForWin(arr);
+    checkForWinWithoutItterating();
+    // checkForWin(arr);
   };
 
   //Too bad :)
+  //Can be moved to parent but it is countable?
   const checkForWin = (arr: GameCell[][]) => {
     if (gameStatus === GameStatus.GameOver) return;
 
     let oppenedCells: number = 0;
 
-    for (let i = 0; i < gridWidth; i++) {
-      for (let j = 0; j < gridWidth; j++) {
-        if (!arr[i][j].isBomb && arr[i][j].status === CellStatus.Opened) {
-          oppenedCells++;
-        }
-      }
-    }
+    arr.forEach((cellRow) => {
+      oppenedCells += cellRow.filter(
+        (cell) => !cell.isBomb && cell.status === CellStatus.Opened
+      ).length;
+    });
 
-    //10 is bomb count(awful)
-    if (oppenedCells === gridWidth * gridWidth - 10) {
+    if (oppenedCells === gridWidth * gridWidth - bombCount) {
       onGameStatusUpdate(GameStatus.Win);
     }
+  };
+
+  //Opposite to itterating over array
+  const checkForWinWithoutItterating = () => {
+    if (gameStatus === GameStatus.GameOver) return;
+
+    if (oppenedCellsGlobal === gridWidth * gridWidth - bombCount) {
+      oppenedCellsGlobal = 0;
+      onGameStatusUpdate(GameStatus.Win);
+    }
+  };
+
+  //Opposite to itterating over array
+  const openCell = (cell: GameCell) => {
+    if (gameStatus === GameStatus.GameOver) return;
+    oppenedCellsGlobal++;
+    cell.status = CellStatus.Opened;
   };
 
   const rows = indexes.map((_, rowIndex) => {
