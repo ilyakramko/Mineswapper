@@ -11,6 +11,7 @@ const gridWidth = 10;
 
 let cellArray: GameCell[][] = [];
 
+//TODO: should move all out of App.tsx?
 function App() {
   const [gameStatus, setGameStatus] = useState<GameStatus>(
     GameStatus.NotStarted
@@ -26,6 +27,7 @@ function App() {
       <Scoreboard
         score={score}
         defaultScore={bombsAmount}
+        gameStatus={gameStatus}
         onResetScore={setScore}
         onGameStatusUpdate={setGameStatus}
       />
