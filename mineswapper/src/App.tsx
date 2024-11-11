@@ -2,7 +2,7 @@ import "./App.css";
 import Scoreboard from "./scoreboard/scoreboard";
 import Grid from "./grid/grid";
 import { GameCell } from "./models/cell";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { GameStatus } from "./models/game";
 import { generateGrid } from "./utils/utils";
 
@@ -21,6 +21,22 @@ function App() {
   if (gameStatus === GameStatus.NotStarted) {
     cellArray = generateGrid(gridWidth);
   }
+
+  //Prevent right click on cells
+  useEffect(() => {
+    function handleContextMenu(e: Event) {
+      e.preventDefault();
+    }
+
+    const rootElement = document.getElementById("mineswapper-grid");
+    if (rootElement === null) return;
+
+    rootElement.addEventListener("contextmenu", handleContextMenu);
+
+    return () => {
+      rootElement.removeEventListener("contextmenu", handleContextMenu);
+    };
+  }, []);
 
   return (
     <div className="mineswapper">

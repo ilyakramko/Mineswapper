@@ -43,16 +43,10 @@ export default function Scoreboard({
     setElapsedTime(seconds);
   };
 
-  if (gameStatus === GameStatus.NotStarted) {
-    stopStopwatch();
-  }
-
-  if (gameStatus === GameStatus.GameOver || gameStatus === GameStatus.Win) {
-    stopStopwatch();
-  }
-
   if (gameStatus === GameStatus.InProgress) {
     startStopwatch();
+  } else {
+    stopStopwatch();
   }
 
   return (

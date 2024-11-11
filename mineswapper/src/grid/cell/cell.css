@@ -1,3 +1,15 @@
+button {
+  background: none;
+  border: none;
+  outline: none;
+  box-shadow: none;
+
+  font-family: "Orbitron", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 500;
+  font-style: normal;
+}
+
 .cell {
   border-radius: 2px;
   width: 34px;

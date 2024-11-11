@@ -39,14 +39,13 @@ export default function Grid({
 
   const handleClick = (
     coord: Coordinates,
-    event: React.MouseEvent<HTMLDivElement>
+    event: React.MouseEvent<HTMLButtonElement>
   ) => {
     switch (event.button) {
       case 0:
         handleLeftClick(coord);
         break;
-      //TODO: Right click is not working;
-      case 1:
+      case 2:
         handleRightClick(coord);
         break;
       default:
@@ -105,7 +104,6 @@ export default function Grid({
     }
 
     openCell(cell);
-    // cell.status = CellStatus.Opened;
 
     if (cell.isBomb) {
       oppenedCellsGlobal = 0;
@@ -115,7 +113,6 @@ export default function Grid({
 
     if (cell.score > 0) {
       checkForWinWithoutItterating();
-      // checkForWin(arr);
       return;
     }
 
@@ -137,28 +134,8 @@ export default function Grid({
     }
 
     checkForWinWithoutItterating();
-    // checkForWin(arr);
   };
 
-  //Too bad :)
-  //Can be moved to parent but it is countable?
-  const checkForWin = (arr: GameCell[][]) => {
-    if (gameStatus === GameStatus.GameOver) return;
-
-    let oppenedCells: number = 0;
-
-    arr.forEach((cellRow) => {
-      oppenedCells += cellRow.filter(
-        (cell) => !cell.isBomb && cell.status === CellStatus.Opened
-      ).length;
-    });
-
-    if (oppenedCells === gridWidth * gridWidth - bombCount) {
-      onGameStatusUpdate(GameStatus.Win);
-    }
-  };
-
-  //Opposite to itterating over array
   const checkForWinWithoutItterating = () => {
     if (gameStatus === GameStatus.GameOver) return;
 
@@ -168,7 +145,6 @@ export default function Grid({
     }
   };
 
-  //Opposite to itterating over array
   const openCell = (cell: GameCell) => {
     if (gameStatus === GameStatus.GameOver) return;
     oppenedCellsGlobal++;
