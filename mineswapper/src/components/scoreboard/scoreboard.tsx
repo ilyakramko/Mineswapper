@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { GameStatus } from "../models/game";
+import { GameStatus } from "../../models/game";
 import "./scoreboard.css";
 
 interface ScoreboardProps {

@@ -1,6 +1,6 @@
 import "./App.css";
-import Scoreboard from "./scoreboard/scoreboard";
-import Grid from "./grid/grid";
+import Scoreboard from "./components/scoreboard/scoreboard";
+import Grid from "./components/grid/grid";
 import { GameCell } from "./models/cell";
 import { useEffect, useState } from "react";
 import { GameStatus } from "./models/game";

@@ -1,8 +1,8 @@
 import Cell from "./cell/cell";
-import { GameCell, CellStatus, Coordinates } from "../models/cell";
+import { GameCell, CellStatus, Coordinates } from "../../models/cell";
 import "./grid.css";
 import { useEffect, useState } from "react";
-import { GameStatus } from "../models/game";
+import { GameStatus } from "../../models/game";
 
 const indexes = Array.from({ length: 10 }, (_, i) => i);
 //To avoid itterating over array
@@ -33,6 +33,7 @@ export default function Grid({
 
   //Was added if initGrid updated since useState is setted only during initial rendering
   //Should be avoided?
+  //Use reducer instead?
   useEffect(() => {
     setCellArray(initGrid);
   }, [initGrid]);

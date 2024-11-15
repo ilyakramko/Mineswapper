@@ -1,6 +1,6 @@
-import { CellStatus, Coordinates, GameCell } from "../../models/cell";
-import { GameStatus } from "../../models/game";
-import { getCellStyles } from "../../utils/utils";
+import { CellStatus, Coordinates, GameCell } from "../../../models/cell";
+import { GameStatus } from "../../../models/game";
+import { getCellStyles } from "../../../utils/utils";
 import "./cell.css";
 
 interface CellProps {
