@@ -19,6 +19,8 @@ function App() {
     GameStatus.NotStarted
   );
   const [score, setScore] = useState<number>(bombsAmount);
+  //???
+  const [authenticated, setAuthenticated] = useState<boolean>(false);
 
   if (gameStatus === GameStatus.NotStarted) {
     //TODO: should be on the grid level
@@ -44,29 +46,35 @@ function App() {
   return (
     <div className="container">
       <div className="login">
-        <Login />
+        <Login onAuth={setAuthenticated} />
       </div>
-      <div className="player">
-        <PlayerInfo />
-      </div>
-      <div className="mineswapper">
-        <Scoreboard
-          score={score}
-          defaultScore={bombsAmount}
-          gameStatus={gameStatus}
-          onResetScore={setScore}
-          onGameStatusUpdate={setGameStatus}
-        />
-        <Grid
-          initGrid={cellArray}
-          gridWidth={gridWidth}
-          gameStatus={gameStatus}
-          bombCount={bombsAmount}
-          score={score}
-          onSetScore={setScore}
-          onGameStatusUpdate={setGameStatus}
-        />
-      </div>
+
+      {authenticated && (
+        <div className="player">
+          <PlayerInfo />
+        </div>
+      )}
+
+      {authenticated && (
+        <div className="mineswapper">
+          <Scoreboard
+            score={score}
+            defaultScore={bombsAmount}
+            gameStatus={gameStatus}
+            onResetScore={setScore}
+            onGameStatusUpdate={setGameStatus}
+          />
+          <Grid
+            initGrid={cellArray}
+            gridWidth={gridWidth}
+            gameStatus={gameStatus}
+            bombCount={bombsAmount}
+            score={score}
+            onSetScore={setScore}
+            onGameStatusUpdate={setGameStatus}
+          />
+        </div>
+      )}
     </div>
   );
 }
