@@ -1,3 +1,19 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.login {
+  width: 359px;
+  margin: 0px 0px 25px 0px;
+}
+
+.player {
+  width: 359px;
+  margin: 0px 0px 25px 0px;
+}
+
 .mineswapper {
   width: 359px;
   height: 410px;

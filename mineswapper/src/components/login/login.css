@@ -1,0 +1,43 @@
+form {
+  display: flex;
+  justify-content: space-between;
+  flex-direction: row;
+}
+
+.username-submit > input[type="submit"] {
+  border: none;
+
+  background: rgb(120, 98, 130, 0.2);
+
+  height: 26px;
+
+  font-family: "Orbitron", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 500;
+  font-style: normal;
+}
+
+.username-input > input[type="textbox"] {
+  border: none;
+
+  background: rgb(120, 98, 130, 0.2);
+
+  height: 24px;
+  width: 280px;
+
+  font-family: "Orbitron", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 500;
+  font-style: normal;
+}
+.username-submit > input[type="submit"]:hover {
+  background: rgb(120, 98, 130, 0.5);
+  cursor: pointer;
+}
+
+.username-input > input[type="textbox"]:focus {
+  border: none;
+  outline: none;
+  box-shadow: none;
+  background: rgb(120, 98, 130, 0.5);
+}

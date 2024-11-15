@@ -5,6 +5,8 @@ import { GameCell } from "./models/cell";
 import { useEffect, useState } from "react";
 import { GameStatus } from "./models/game";
 import { generateGrid } from "./utils/utils";
+import Login from "./components/login/login";
+import PlayerInfo from "./components/player-info/playerInfo";
 
 const bombsAmount = 10;
 const gridWidth = 10;
@@ -19,6 +21,7 @@ function App() {
   const [score, setScore] = useState<number>(bombsAmount);
 
   if (gameStatus === GameStatus.NotStarted) {
+    //TODO: should be on the grid level
     cellArray = generateGrid(gridWidth);
   }
 
@@ -39,23 +42,31 @@ function App() {
   }, []);
 
   return (
-    <div className="mineswapper">
-      <Scoreboard
-        score={score}
-        defaultScore={bombsAmount}
-        gameStatus={gameStatus}
-        onResetScore={setScore}
-        onGameStatusUpdate={setGameStatus}
-      />
-      <Grid
-        initGrid={cellArray}
-        gridWidth={gridWidth}
-        gameStatus={gameStatus}
-        bombCount={bombsAmount}
-        score={score}
-        onSetScore={setScore}
-        onGameStatusUpdate={setGameStatus}
-      />
+    <div className="container">
+      <div className="login">
+        <Login />
+      </div>
+      <div className="player">
+        <PlayerInfo />
+      </div>
+      <div className="mineswapper">
+        <Scoreboard
+          score={score}
+          defaultScore={bombsAmount}
+          gameStatus={gameStatus}
+          onResetScore={setScore}
+          onGameStatusUpdate={setGameStatus}
+        />
+        <Grid
+          initGrid={cellArray}
+          gridWidth={gridWidth}
+          gameStatus={gameStatus}
+          bombCount={bombsAmount}
+          score={score}
+          onSetScore={setScore}
+          onGameStatusUpdate={setGameStatus}
+        />
+      </div>
     </div>
   );
 }

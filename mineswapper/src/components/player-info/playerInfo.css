@@ -1,0 +1,16 @@
+.player-info {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 359px;
+}
+
+.player-info > .player-info-item {
+  display: flex;
+  justify-content: space-evenly;
+  width: 359px;
+}
+
+.player-info-item > div {
+  width: 179px;
+}
