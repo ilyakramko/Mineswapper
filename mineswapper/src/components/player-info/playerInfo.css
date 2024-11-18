@@ -14,3 +14,26 @@
 .player-info-item > div {
   width: 179px;
 }
+
+.player-info-logout {
+  margin: 25px 0px 0px 0px;
+  width: 359px;
+}
+
+.player-info-logout-button > button {
+  border: none;
+
+  background: rgb(120, 98, 130, 0.2);
+
+  height: 26px;
+
+  font-family: "Orbitron", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 500;
+  font-style: normal;
+}
+
+.player-info-logout-button > button:hover {
+  background: rgb(120, 98, 130, 0.5);
+  cursor: pointer;
+}

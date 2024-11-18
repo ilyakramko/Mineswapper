@@ -31,9 +31,21 @@ export default function Scoreboard({
     }
   };
 
-  const stopStopwatch = () => {
+  const stopStopwatch = async () => {
     clearInterval(stopwatchInterval);
     stopwatchInterval = null;
+
+    //Currently do not count reset as game over
+    if (gameStatus === GameStatus.NotStarted) return;
+
+    const isWin = gameStatus === GameStatus.Win;
+
+    //Could be a better place???
+    //Count and share clicks???
+    //Share elapsedTime???
+    //TODO: game info pushed twice
+    //TODO: update displayed user info
+    // await pushGameInfo(elapsedTime, 50, defaultScore - score, isWin);
   };
 
   const updateStopwatch = () => {

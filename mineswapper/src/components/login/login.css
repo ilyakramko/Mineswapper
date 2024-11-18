@@ -30,6 +30,7 @@ form {
   font-weight: 500;
   font-style: normal;
 }
+
 .username-submit > input[type="submit"]:hover {
   background: rgb(120, 98, 130, 0.5);
   cursor: pointer;

@@ -1,23 +1,16 @@
-import { useEffect, useState } from "react";
 import { Player } from "../../models/player";
 import "./playerInfo.css";
 
-export default function PlayerInfo() {
-  const [player, setPlayer] = useState<Player>();
+interface PlayerInfoProps {
+  player: Player;
+  onLogout: (isAuth: boolean) => void;
+}
 
-  useEffect(() => {
-    //TODO: temp, should be moved to service or smth
-    //storing and retrivieng token???
-    fetch("https://mineswapper-api.azurewebsites.net/api/user/current", {
-      method: "GET",
-      headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        setPlayer(data as Player);
-      })
-      .catch((error) => console.log(error));
-  }, []);
+export default function PlayerInfo({ player, onLogout }: PlayerInfoProps) {
+  const onLogOut = () => {
+    localStorage.removeItem("token");
+    onLogout(false);
+  };
 
   return (
     <div className="player-info">
@@ -47,6 +40,11 @@ export default function PlayerInfo() {
               ? Math.round(player.totalScore / player.gamesPlayed)
               : 0}
           </b>
+        </div>
+      </div>
+      <div className="player-info-logout">
+        <div className="player-info-logout-button">
+          <button onClick={onLogOut}>Logout</button>
         </div>
       </div>
       {/* Add openning the stat of the games played in modal */}

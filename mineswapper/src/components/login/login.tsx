@@ -1,42 +1,26 @@
 import "./login.css";
-import { AuthResponse } from "../../models/auth";
 import { useState } from "react";
+import { authPlayer } from "../../services/authService";
+import { currentPlayer } from "../../services/gameService";
+import { Player } from "../../models/player";
 
 interface LoginProps {
+  setPlayer: (player: Player) => void;
   onAuth: (isAuth: boolean) => void;
 }
 
-//TODO: On new click the user info is not updated
-export default function Login({ onAuth }: LoginProps) {
+export default function Login({ setPlayer, onAuth }: LoginProps) {
   const [username, setUsername] = useState("");
-  //TODO: temp, should be moved to service or smth
-  //storing and retrivieng token???
-  const authPlayer = async () => {
+
+  const onAuthPlayer = async () => {
     try {
-      const authRequest = {
-        username: username,
-      };
+      const authResponse = await authPlayer(username);
+      localStorage.setItem("token", authResponse.accessToken);
 
-      const response = await fetch(
-        "https://mineswapper-api.azurewebsites.net/api/auth/token",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(authRequest),
-        }
-      );
-      if (!response.ok) {
-        throw new Error("Network response was not ok");
-      }
+      const player = await currentPlayer();
 
-      const data = (await response.json()) as AuthResponse;
-
-      if (data.accessToken && data.accessToken !== "") {
-        localStorage.setItem("token", data.accessToken);
-        onAuth(true);
-      }
+      setPlayer(player);
+      onAuth(true);
     } catch (error) {
       console.error("Error:", error);
     }
@@ -57,7 +41,7 @@ export default function Login({ onAuth }: LoginProps) {
           ></input>
         </div>
         <div className="username-submit">
-          <input type="submit" value="Login" onClick={authPlayer}></input>
+          <input type="submit" value="Login" onClick={onAuthPlayer}></input>
         </div>
       </form>
     </div>

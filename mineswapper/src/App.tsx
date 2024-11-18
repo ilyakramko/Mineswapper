@@ -7,6 +7,13 @@ import { GameStatus } from "./models/game";
 import { generateGrid } from "./utils/utils";
 import Login from "./components/login/login";
 import PlayerInfo from "./components/player-info/playerInfo";
+import { Player } from "./models/player";
+
+const defaultPlayer: Player = {
+  userName: "",
+  gamesPlayed: 0,
+  totalScore: 0,
+};
 
 const bombsAmount = 10;
 const gridWidth = 10;
@@ -19,8 +26,8 @@ function App() {
     GameStatus.NotStarted
   );
   const [score, setScore] = useState<number>(bombsAmount);
-  //???
   const [authenticated, setAuthenticated] = useState<boolean>(false);
+  const [player, setPlayer] = useState<Player>(defaultPlayer);
 
   if (gameStatus === GameStatus.NotStarted) {
     //TODO: should be on the grid level
@@ -45,13 +52,15 @@ function App() {
 
   return (
     <div className="container">
-      <div className="login">
-        <Login onAuth={setAuthenticated} />
-      </div>
+      {!authenticated && (
+        <div className="login">
+          <Login setPlayer={setPlayer} onAuth={setAuthenticated} />
+        </div>
+      )}
 
       {authenticated && (
         <div className="player">
-          <PlayerInfo />
+          <PlayerInfo player={player} onLogout={setAuthenticated} />
         </div>
       )}
 
