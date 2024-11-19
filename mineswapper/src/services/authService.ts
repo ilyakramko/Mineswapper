@@ -7,10 +7,9 @@ export async function authPlayer(username: string): Promise<AuthResponse> {
   };
 
   var response = await call<AuthRequest, AuthResponse>(
+    "/auth/token",
     "POST",
-    "auth/token",
-    authRequest,
-    false
+    authRequest
   );
 
   if (response === null) {

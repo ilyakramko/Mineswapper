@@ -6,46 +6,33 @@ export type HttpMethod =
   | "PATCH"
   | "DELETE";
 
-// export enum HttpMethod {
-//   Get,
-//   Post,
-//   Put,
-//   Delete,
-//   Patch,
-//   Options,
-// }
+const BASE_URL: string | undefined =
+  process.env.REACT_APP_MINESWAPPER_SERVER_BASE_URL;
 
-const BASE_URL: string = "";
-
-//Return type?
-//With init value?
-//TODO: Rewrite the services
 export async function call<ApiRequest, ApiResponse>(
-  method: HttpMethod,
   url: string,
-  body: ApiRequest | null = null,
-  secured: boolean = true
+  method: HttpMethod,
+  body?: ApiRequest,
+  headers: HeadersInit = {}
 ): Promise<ApiResponse | null> {
   let response: ApiResponse | null = null;
 
+  if (BASE_URL === undefined) {
+    throw new Error("The base URL is not specified.");
+  }
+
   try {
-    let headers: Headers = new Headers();
-    headers.append("Content-Type", "application/json");
+    let token = localStorage.getItem("token");
 
-    if (secured) {
-      let token = localStorage.getItem("token");
+    const requestHeaders: HeadersInit = {
+      "Content-Type": "application/json",
+      ...headers,
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    };
 
-      if (token === null) {
-        throw new Error("The authentication token is null");
-      }
-
-      headers.append("Authorization", `Bearer ${token}`);
-    }
-
-    //body?
-    const apiResponse = await fetch(`${BASE_URL}/${url}`, {
+    const apiResponse = await fetch(`${BASE_URL}${url}`, {
       method: method,
-      headers: headers,
+      headers: requestHeaders,
       body: body ? JSON.stringify(body) : undefined,
     });
 

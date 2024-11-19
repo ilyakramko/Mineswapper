@@ -3,7 +3,7 @@ import { Player } from "../models/player";
 import { call } from "./httpService";
 
 export async function currentPlayer(): Promise<Player> {
-  var response = await call<null, Player>("GET", "user/current");
+  var response = await call<null, Player>("/user/current", "GET");
 
   if (response === null) {
     throw new Error("Response is null");
@@ -26,8 +26,8 @@ export async function pushGameInfo(
   };
 
   var response = await call<GameInfoRequest, GameInfoResponse>(
+    "/game",
     "POST",
-    "game",
     request
   );
 
