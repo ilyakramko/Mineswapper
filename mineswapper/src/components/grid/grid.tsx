@@ -7,6 +7,7 @@ import { GameStatus } from "../../models/game";
 const indexes = Array.from({ length: 10 }, (_, i) => i);
 //To avoid itterating over array
 let oppenedCellsGlobal: number = 0;
+let clicksGlobal: number = 0;
 
 interface GridProps {
   initGrid: GameCell[][];
@@ -16,6 +17,7 @@ interface GridProps {
   score: number;
   onSetScore: (score: number) => void;
   onGameStatusUpdate: (status: GameStatus) => void;
+  onSendCurrentGameInfo: (clicks: number, status: GameStatus) => Promise<void>;
 }
 
 //If from parent and creating the useState on it, is it ok?
@@ -28,6 +30,7 @@ export default function Grid({
   score,
   onSetScore,
   onGameStatusUpdate,
+  onSendCurrentGameInfo,
 }: GridProps) {
   const [cellArray, setCellArray] = useState<GameCell[][]>(initGrid);
 
@@ -36,6 +39,23 @@ export default function Grid({
   //Use reducer instead?
   useEffect(() => {
     setCellArray(initGrid);
+  }, [initGrid]);
+
+  //Prevent right click on cells
+  //depend on initGrid?????
+  useEffect(() => {
+    function handleContextMenu(e: Event) {
+      e.preventDefault();
+    }
+
+    const rootElement = document.getElementById("mineswapper-grid");
+    if (rootElement === null) return;
+
+    rootElement.addEventListener("contextmenu", handleContextMenu);
+
+    return () => {
+      rootElement.removeEventListener("contextmenu", handleContextMenu);
+    };
   }, [initGrid]);
 
   const handleClick = (
@@ -55,6 +75,7 @@ export default function Grid({
   };
 
   const handleLeftClick = (coord: Coordinates) => {
+    clicksGlobal++;
     let arrayCopy: GameCell[][] = cellArray.slice();
     clickCell(coord, arrayCopy);
     setCellArray(arrayCopy);
@@ -64,7 +85,6 @@ export default function Grid({
     if (gameStatus === GameStatus.GameOver) return;
 
     let arr: GameCell[][] = cellArray.slice();
-    let scoreCopy: number = score;
 
     if (gameStatus === GameStatus.NotStarted) {
       onGameStatusUpdate(GameStatus.InProgress);
@@ -73,7 +93,7 @@ export default function Grid({
     let cell: GameCell = arr[coord.x][coord.y];
     if (cell.status === CellStatus.Flagged) {
       cell.status = CellStatus.Closed;
-      onSetScore(++scoreCopy);
+      onSetScore(score + 1);
       setCellArray(arr);
       return;
     }
@@ -82,7 +102,7 @@ export default function Grid({
 
     if (cell.status === CellStatus.Closed) {
       cell.status = CellStatus.Flagged;
-      onSetScore(--scoreCopy);
+      onSetScore(score - 1);
       setCellArray(arr);
       return;
     }
@@ -107,8 +127,7 @@ export default function Grid({
     openCell(cell);
 
     if (cell.isBomb) {
-      oppenedCellsGlobal = 0;
-      onGameStatusUpdate(GameStatus.GameOver);
+      sendCurrentGameInfo(GameStatus.GameOver);
       return;
     }
 
@@ -141,9 +160,15 @@ export default function Grid({
     if (gameStatus === GameStatus.GameOver) return;
 
     if (oppenedCellsGlobal === gridWidth * gridWidth - bombCount) {
-      oppenedCellsGlobal = 0;
-      onGameStatusUpdate(GameStatus.Win);
+      sendCurrentGameInfo(GameStatus.Win);
     }
+  };
+
+  const sendCurrentGameInfo = (status: GameStatus) => {
+    onSendCurrentGameInfo(clicksGlobal, status);
+    onGameStatusUpdate(status);
+    oppenedCellsGlobal = 0;
+    clicksGlobal = 0;
   };
 
   const openCell = (cell: GameCell) => {

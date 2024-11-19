@@ -18,5 +18,6 @@ export interface GameInfoResponse {
   clicks: number;
   cellsFlagged: number;
   isWin: boolean;
+  score: number;
   played: Date;
 }

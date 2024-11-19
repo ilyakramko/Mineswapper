@@ -5,11 +5,10 @@ import { currentPlayer } from "../../services/gameService";
 import { Player } from "../../models/player";
 
 interface LoginProps {
-  setPlayer: (player: Player) => void;
-  onAuth: (isAuth: boolean) => void;
+  onAuth: (player: Player) => void;
 }
 
-export default function Login({ setPlayer, onAuth }: LoginProps) {
+export default function Login({ onAuth }: LoginProps) {
   const [username, setUsername] = useState("");
 
   const onAuthPlayer = async () => {
@@ -19,8 +18,7 @@ export default function Login({ setPlayer, onAuth }: LoginProps) {
 
       const player = await currentPlayer();
 
-      setPlayer(player);
-      onAuth(true);
+      onAuth(player);
     } catch (error) {
       console.error("Error:", error);
     }

@@ -6,6 +6,7 @@ interface ScoreboardProps {
   score: number;
   defaultScore: number;
   gameStatus: GameStatus;
+  onStopwatchUpdate: (time: number) => void;
   onResetScore: (score: number) => void;
   onGameStatusUpdate: (status: GameStatus) => void;
 }
@@ -19,6 +20,7 @@ export default function Scoreboard({
   score,
   defaultScore,
   gameStatus,
+  onStopwatchUpdate,
   onResetScore,
   onGameStatusUpdate,
 }: ScoreboardProps) {
@@ -34,18 +36,6 @@ export default function Scoreboard({
   const stopStopwatch = async () => {
     clearInterval(stopwatchInterval);
     stopwatchInterval = null;
-
-    //Currently do not count reset as game over
-    if (gameStatus === GameStatus.NotStarted) return;
-
-    const isWin = gameStatus === GameStatus.Win;
-
-    //Could be a better place???
-    //Count and share clicks???
-    //Share elapsedTime???
-    //TODO: game info pushed twice
-    //TODO: update displayed user info
-    // await pushGameInfo(elapsedTime, 50, defaultScore - score, isWin);
   };
 
   const updateStopwatch = () => {
@@ -53,6 +43,7 @@ export default function Scoreboard({
     let elapsedTime = currentTime - startTime;
     let seconds = Math.floor(elapsedTime / 1000);
     setElapsedTime(seconds);
+    onStopwatchUpdate(seconds);
   };
 
   if (gameStatus === GameStatus.InProgress) {

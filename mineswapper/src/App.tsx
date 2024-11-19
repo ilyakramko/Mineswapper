@@ -2,18 +2,13 @@ import "./App.css";
 import Scoreboard from "./components/scoreboard/scoreboard";
 import Grid from "./components/grid/grid";
 import { GameCell } from "./models/cell";
-import { useEffect, useState } from "react";
+import { useRef, useState } from "react";
 import { GameStatus } from "./models/game";
 import { generateGrid } from "./utils/utils";
 import Login from "./components/login/login";
 import PlayerInfo from "./components/player-info/playerInfo";
 import { Player } from "./models/player";
-
-const defaultPlayer: Player = {
-  userName: "",
-  gamesPlayed: 0,
-  totalScore: 0,
-};
+import { pushGameInfo } from "./services/gameService";
 
 const bombsAmount = 10;
 const gridWidth = 10;
@@ -26,50 +21,67 @@ function App() {
     GameStatus.NotStarted
   );
   const [score, setScore] = useState<number>(bombsAmount);
-  const [authenticated, setAuthenticated] = useState<boolean>(false);
-  const [player, setPlayer] = useState<Player>(defaultPlayer);
+  const [player, setPlayerInfo] = useState<Player | undefined>(undefined);
+
+  const gameElapsedTime = useRef<number>(0);
 
   if (gameStatus === GameStatus.NotStarted) {
     //TODO: should be on the grid level
     cellArray = generateGrid(gridWidth);
   }
 
-  //Prevent right click on cells
-  useEffect(() => {
-    function handleContextMenu(e: Event) {
-      e.preventDefault();
+  const logoutPlayer = () => {
+    setPlayerInfo(undefined);
+    setScore(0);
+    setGameStatus(GameStatus.NotStarted);
+  };
+
+  const stopwatchUpdate = (time: number) => {
+    gameElapsedTime.current = time;
+  };
+
+  const sendCurrentGameInfo = async (clicks: number, status: GameStatus) => {
+    const gameInfo = await pushGameInfo(
+      gameElapsedTime.current === 0 ? 1 : gameElapsedTime.current,
+      clicks,
+      bombsAmount - score,
+      status === GameStatus.Win
+    );
+
+    gameElapsedTime.current = 0;
+
+    if (player === undefined) {
+      throw new Error("Player is not authenticated.");
     }
 
-    const rootElement = document.getElementById("mineswapper-grid");
-    if (rootElement === null) return;
-
-    rootElement.addEventListener("contextmenu", handleContextMenu);
-
-    return () => {
-      rootElement.removeEventListener("contextmenu", handleContextMenu);
-    };
-  }, []);
+    setPlayerInfo({
+      ...player,
+      totalScore: player.totalScore + gameInfo.score,
+      gamesPlayed: player.gamesPlayed + 1,
+    });
+  };
 
   return (
     <div className="container">
-      {!authenticated && (
+      {!player && (
         <div className="login">
-          <Login setPlayer={setPlayer} onAuth={setAuthenticated} />
+          <Login onAuth={setPlayerInfo} />
         </div>
       )}
 
-      {authenticated && (
+      {player && (
         <div className="player">
-          <PlayerInfo player={player} onLogout={setAuthenticated} />
+          <PlayerInfo player={player} onLogout={logoutPlayer} />
         </div>
       )}
 
-      {authenticated && (
+      {player && (
         <div className="mineswapper">
           <Scoreboard
             score={score}
             defaultScore={bombsAmount}
             gameStatus={gameStatus}
+            onStopwatchUpdate={stopwatchUpdate}
             onResetScore={setScore}
             onGameStatusUpdate={setGameStatus}
           />
@@ -81,6 +93,7 @@ function App() {
             score={score}
             onSetScore={setScore}
             onGameStatusUpdate={setGameStatus}
+            onSendCurrentGameInfo={sendCurrentGameInfo}
           />
         </div>
       )}
