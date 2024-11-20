@@ -3,13 +3,13 @@ import "./playerInfo.css";
 
 interface PlayerInfoProps {
   player: Player;
-  onLogout: (isAuth: boolean) => void;
+  onLogout: () => void;
 }
 
 export default function PlayerInfo({ player, onLogout }: PlayerInfoProps) {
-  const onLogOut = () => {
+  const logoutPlayer = () => {
     localStorage.removeItem("token");
-    onLogout(false);
+    onLogout();
   };
 
   return (
@@ -17,26 +17,26 @@ export default function PlayerInfo({ player, onLogout }: PlayerInfoProps) {
       <div className="player-info-item">
         <div>Username: </div>
         <div>
-          <b>{player && player.userName}</b>
+          <b>{player.userName}</b>
         </div>
       </div>
       <div className="player-info-item">
         <div>Games: </div>
         <div>
-          <b>{player && player.gamesPlayed}</b>
+          <b>{player.gamesPlayed}</b>
         </div>
       </div>
       <div className="player-info-item">
         <div>Total score: </div>
         <div>
-          <b>{player && player.totalScore}</b>
+          <b>{player.totalScore}</b>
         </div>
       </div>
       <div className="player-info-item">
         <div>Rating: </div>
         <div>
           <b>
-            {player && player.gamesPlayed > 0
+            {player.gamesPlayed > 0
               ? Math.round(player.totalScore / player.gamesPlayed)
               : 0}
           </b>
@@ -44,10 +44,9 @@ export default function PlayerInfo({ player, onLogout }: PlayerInfoProps) {
       </div>
       <div className="player-info-logout">
         <div className="player-info-logout-button">
-          <button onClick={onLogOut}>Logout</button>
+          <button onClick={logoutPlayer}>Logout</button>
         </div>
       </div>
-      {/* Add openning the stat of the games played in modal */}
     </div>
   );
 }

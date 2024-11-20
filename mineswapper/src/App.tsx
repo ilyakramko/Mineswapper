@@ -17,11 +17,12 @@ let cellArray: GameCell[][] = [];
 
 //TODO: should move all out of App.tsx?
 function App() {
+  //TODO: user context for score, player and gameStatus?
   const [gameStatus, setGameStatus] = useState<GameStatus>(
     GameStatus.NotStarted
   );
   const [score, setScore] = useState<number>(bombsAmount);
-  const [player, setPlayerInfo] = useState<Player | undefined>(undefined);
+  const [player, setPlayer] = useState<Player | undefined>(undefined);
 
   const gameElapsedTime = useRef<number>(0);
 
@@ -31,7 +32,7 @@ function App() {
   }
 
   const logoutPlayer = () => {
-    setPlayerInfo(undefined);
+    setPlayer(undefined);
     setScore(0);
     setGameStatus(GameStatus.NotStarted);
   };
@@ -41,6 +42,10 @@ function App() {
   };
 
   const sendCurrentGameInfo = async (clicks: number, status: GameStatus) => {
+    if (player === undefined) {
+      throw new Error("Player is not authenticated.");
+    }
+
     const gameInfo = await pushGameInfo(
       gameElapsedTime.current === 0 ? 1 : gameElapsedTime.current,
       clicks,
@@ -50,11 +55,7 @@ function App() {
 
     gameElapsedTime.current = 0;
 
-    if (player === undefined) {
-      throw new Error("Player is not authenticated.");
-    }
-
-    setPlayerInfo({
+    setPlayer({
       ...player,
       totalScore: player.totalScore + gameInfo.score,
       gamesPlayed: player.gamesPlayed + 1,
@@ -65,7 +66,7 @@ function App() {
     <div className="container">
       {!player && (
         <div className="login">
-          <Login onAuth={setPlayerInfo} />
+          <Login onAuth={setPlayer} />
         </div>
       )}
 

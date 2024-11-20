@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { GameStatus } from "../../models/game";
 
 const indexes = Array.from({ length: 10 }, (_, i) => i);
+
 //To avoid itterating over array
 let oppenedCellsGlobal: number = 0;
 let clicksGlobal: number = 0;
@@ -36,7 +37,7 @@ export default function Grid({
 
   //Was added if initGrid updated since useState is setted only during initial rendering
   //Should be avoided?
-  //Use reducer instead?
+  //Generate grid on that level rather than on above?
   useEffect(() => {
     setCellArray(initGrid);
   }, [initGrid]);
@@ -75,7 +76,9 @@ export default function Grid({
   };
 
   const handleLeftClick = (coord: Coordinates) => {
-    clicksGlobal++;
+    if (cellArray[coord.x][coord.y].status === CellStatus.Closed) {
+      clicksGlobal++;
+    }
     let arrayCopy: GameCell[][] = cellArray.slice();
     clickCell(coord, arrayCopy);
     setCellArray(arrayCopy);
@@ -117,6 +120,7 @@ export default function Grid({
 
     let cell: GameCell = arr[coord.x][coord.y];
 
+    //TODO: Flagged cells are not open on recursion if the score of the cell is 0
     if (
       cell.status === CellStatus.Flagged ||
       cell.status === CellStatus.Opened
