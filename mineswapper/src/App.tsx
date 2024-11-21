@@ -13,8 +13,6 @@ import { pushGameInfo } from "./services/gameService";
 const bombsAmount = 10;
 const gridWidth = 10;
 
-let cellArray: GameCell[][] = [];
-
 //TODO: should move all out of App.tsx?
 function App() {
   //TODO: user context for score, player and gameStatus?
@@ -25,11 +23,6 @@ function App() {
   const [player, setPlayer] = useState<Player | undefined>(undefined);
 
   const gameElapsedTime = useRef<number>(0);
-
-  if (gameStatus === GameStatus.NotStarted) {
-    //TODO: should be on the grid level
-    cellArray = generateGrid(gridWidth);
-  }
 
   const logoutPlayer = () => {
     setPlayer(undefined);
@@ -87,7 +80,6 @@ function App() {
             onGameStatusUpdate={setGameStatus}
           />
           <Grid
-            initGrid={cellArray}
             gridWidth={gridWidth}
             gameStatus={gameStatus}
             bombCount={bombsAmount}

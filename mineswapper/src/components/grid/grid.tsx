@@ -1,8 +1,9 @@
 import Cell from "./cell/cell";
 import { GameCell, CellStatus, Coordinates } from "../../models/cell";
 import "./grid.css";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { GameStatus } from "../../models/game";
+import { generateGrid } from "../../utils/utils";
 
 const indexes = Array.from({ length: 10 }, (_, i) => i);
 
@@ -11,7 +12,6 @@ let oppenedCellsGlobal: number = 0;
 let clicksGlobal: number = 0;
 
 interface GridProps {
-  initGrid: GameCell[][];
   gridWidth: number;
   bombCount: number;
   gameStatus: GameStatus;
@@ -24,7 +24,6 @@ interface GridProps {
 //If from parent and creating the useState on it, is it ok?
 //Too much?
 export default function Grid({
-  initGrid,
   gridWidth,
   bombCount,
   gameStatus,
@@ -33,17 +32,23 @@ export default function Grid({
   onGameStatusUpdate,
   onSendCurrentGameInfo,
 }: GridProps) {
-  const [cellArray, setCellArray] = useState<GameCell[][]>(initGrid);
+  const previousGameStatus = useRef<GameStatus>(GameStatus.NotStarted);
+  const [gridArray, setGridArray] = useState<GameCell[][]>(
+    generateGrid(gridWidth)
+  );
 
-  //Was added if initGrid updated since useState is setted only during initial rendering
-  //Should be avoided?
-  //Generate grid on that level rather than on above?
   useEffect(() => {
-    setCellArray(initGrid);
-  }, [initGrid]);
+    if (
+      gameStatus === GameStatus.NotStarted &&
+      previousGameStatus.current !== GameStatus.NotStarted
+    ) {
+      setGridArray(generateGrid(gridWidth));
+    }
+    previousGameStatus.current = gameStatus;
+  }, [gameStatus, gridWidth]);
 
   //Prevent right click on cells
-  //depend on initGrid?????
+  //depend on gridArray?????
   useEffect(() => {
     function handleContextMenu(e: Event) {
       e.preventDefault();
@@ -57,7 +62,7 @@ export default function Grid({
     return () => {
       rootElement.removeEventListener("contextmenu", handleContextMenu);
     };
-  }, [initGrid]);
+  }, [gridArray]);
 
   const handleClick = (
     coord: Coordinates,
@@ -76,18 +81,18 @@ export default function Grid({
   };
 
   const handleLeftClick = (coord: Coordinates) => {
-    if (cellArray[coord.x][coord.y].status === CellStatus.Closed) {
+    if (gridArray[coord.x][coord.y].status === CellStatus.Closed) {
       clicksGlobal++;
     }
-    let arrayCopy: GameCell[][] = cellArray.slice();
+    let arrayCopy: GameCell[][] = gridArray.slice();
     clickCell(coord, arrayCopy);
-    setCellArray(arrayCopy);
+    setGridArray(arrayCopy);
   };
 
   const handleRightClick = (coord: Coordinates) => {
     if (gameStatus === GameStatus.GameOver) return;
 
-    let arr: GameCell[][] = cellArray.slice();
+    let arr: GameCell[][] = gridArray.slice();
 
     if (gameStatus === GameStatus.NotStarted) {
       onGameStatusUpdate(GameStatus.InProgress);
@@ -97,7 +102,7 @@ export default function Grid({
     if (cell.status === CellStatus.Flagged) {
       cell.status = CellStatus.Closed;
       onSetScore(score + 1);
-      setCellArray(arr);
+      setGridArray(arr);
       return;
     }
 
@@ -106,7 +111,7 @@ export default function Grid({
     if (cell.status === CellStatus.Closed) {
       cell.status = CellStatus.Flagged;
       onSetScore(score - 1);
-      setCellArray(arr);
+      setGridArray(arr);
       return;
     }
   };
@@ -189,7 +194,7 @@ export default function Grid({
             <Cell
               key={columnIndex}
               onCellClick={handleClick}
-              cell={cellArray[rowIndex][columnIndex]}
+              cell={gridArray[rowIndex][columnIndex]}
               gameStatus={gameStatus}
             />
           );
